@@ -172,8 +172,7 @@ end
 commands.help = function()
     windower.add_to_chat(8, 'FocusTarget:')
     windower.add_to_chat(8, '  //ft - toggle focus on current target')
-    windower.add_to_chat(8, '  //ft focus - same as above')
-    windower.add_to_chat(8, '  //ft pos <x|y> <position> - set the x or y position')
+    windower.add_to_chat(8, '  //ft pos <axis> <pos> - set the x or y position')
     windower.add_to_chat(8, '  //ft help - display this help')
 end
 
