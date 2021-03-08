@@ -6,6 +6,7 @@ _addon.version = '2.0.0'
 config = require('config')
 texts  = require('texts')
 images = require('images')
+res = require('resources')
 
 local defaults = {}
 defaults.pos = {}
@@ -46,6 +47,21 @@ hp_percentage_offset_x = 1
 hp_percentage_offset_y = 57
 hp_percentage_max_width = 376
 
+ability_icon = images.new(setup)
+ability_icon:repeat_xy(1, 1)
+ability_icon:draggable(false)
+ability_icon:fit(true)
+ability_icon_offset_x = 0
+ability_icon_offset_y = 70
+
+ability_text = texts.new(setup)
+ability_text:bg_visible(false)
+ability_text:size(14)
+ability_text:stroke_transparency(100)
+ability_text:stroke_width(1)
+ability_text_offset_x = 30
+ability_text_offset_y = 75
+
 hp_colors = {
     player = { 233, 255, 253 },
     npc = { 185, 255, 163 },
@@ -65,6 +81,33 @@ hp_stroke_colors = {
     cfh = { 166, 115, 0 },
     defeated = { 72, 72, 72 }
 }
+
+element_colors = {
+  [0] = { 240, 110, 110 }, --fire
+  [1] = { 77, 212, 219 }, --ice
+  [2] = { 126, 211, 33 }, --wind
+  [3] = { 237, 161, 34 }, --earth
+  [4] = { 212, 57, 198 }, --lightning
+  [5] = { 69, 134, 210 }, --water
+  [6] = { 255, 255, 255 }, --light
+  [7] = { 0, 0, 0 }, --dark
+  [15] = { 255, 255, 255 }, --none
+}
+
+function with_element_color(element, text)
+  if not element then return text end
+  return ' \\cs(' .. element_colors[element][1] .. ',' .. element_colors[element][2] .. ',' .. element_colors[element][3] .. ')' .. text .. '\\cr'
+end
+
+function set_ability(ability, element, target)
+  local text = with_element_color(element, ability)
+  if target then
+    text = text .. ' >>> ' .. target
+  end
+  local img = element or 'none' --have to use transparent image due to bug in images lib
+  ability_icon:path(windower.addon_path .. 'img/elements/' .. img .. '.png')
+  ability_text:text(text)
+end
 
 function set_hp_colors_for_target(target)
     local bar_percentage = hp_colors.unclaimed
@@ -129,6 +172,8 @@ function show()
   hp_text:show()
   hp_bg:show()
   hp_percentage:show()
+  ability_text:show()
+  ability_icon:show()
 end
 
 function hide()
@@ -136,6 +181,8 @@ function hide()
   hp_text:hide()
   hp_bg:hide()
   hp_percentage:hide()
+  ability_text:hide()
+  ability_icon:hide()
 end
 
 function update_position()
@@ -143,6 +190,8 @@ function update_position()
     hp_text:pos(settings.pos.x + hp_text_offset_x, settings.pos.y + hp_text_offset_y)
     hp_bg:pos(settings.pos.x + hp_bg_offset_x, settings.pos.y + hp_bg_offset_y)
     hp_percentage:pos(settings.pos.x + hp_percentage_offset_x, settings.pos.y + hp_percentage_offset_y)
+    ability_text:pos(settings.pos.x + ability_text_offset_x, settings.pos.y + ability_text_offset_y)
+    ability_icon:pos(settings.pos.x + ability_icon_offset_x, settings.pos.y + ability_icon_offset_y)
 end
 
 commands = {}
@@ -205,6 +254,41 @@ windower.register_event("prerender", function()
   set_hp_percentage(focused_target.hpp)
   hp_text:text(focused_target.hpp .. '% ' .. focused_target.name)
   show()
+end)
+
+windower.register_event('action', function (action)
+  if not tracking or action.actor_id ~= tracking then return end
+
+  --[[
+    Categories:
+      4: Finish casting spell
+      7: Begin weapon skill or TP move
+      8: Begin spell casting or interrupt casting, param 24931 = start, param 28787 = interupt
+      11: Finish TP move
+  ]]
+
+  if action.category == 4 then
+    set_ability('')
+  elseif action.category == 8 then
+    -- Interupted
+    if action.param == 28787 then
+      set_ability('')
+      return
+    end
+
+    -- Casting new spell
+    local ability_id = action.targets[1].actions[1].param
+    local ability_name = res.spells[ability_id].name
+    local ability_element = res.spells[ability_id].element
+    local target_id = action.targets[1].id
+    local target_name
+    if target_id ~= tracking then
+      target_name = windower.ffxi.get_mob_by_id(target_id).name
+    end
+    set_ability(ability_name, ability_element, target_name)
+  -- elseif
+
+  end
 end)
 
 update_position()
