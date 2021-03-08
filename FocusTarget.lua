@@ -83,30 +83,30 @@ hp_stroke_colors = {
 }
 
 element_colors = {
-  [0] = { 240, 110, 110 }, --fire
-  [1] = { 77, 212, 219 }, --ice
-  [2] = { 126, 211, 33 }, --wind
-  [3] = { 237, 161, 34 }, --earth
-  [4] = { 212, 57, 198 }, --lightning
-  [5] = { 69, 134, 210 }, --water
-  [6] = { 255, 255, 255 }, --light
-  [7] = { 0, 0, 0 }, --dark
-  [15] = { 255, 255, 255 }, --none
+    [0] = { 240, 110, 110 }, --fire
+    [1] = { 77, 212, 219 }, --ice
+    [2] = { 126, 211, 33 }, --wind
+    [3] = { 237, 161, 34 }, --earth
+    [4] = { 212, 57, 198 }, --lightning
+    [5] = { 69, 134, 210 }, --water
+    [6] = { 255, 255, 255 }, --light
+    [7] = { 0, 0, 0 }, --dark
+    [15] = { 255, 255, 255 }, --none
 }
 
 function with_element_color(element, text)
-  if not element then return text end
-  return ' \\cs(' .. element_colors[element][1] .. ',' .. element_colors[element][2] .. ',' .. element_colors[element][3] .. ')' .. text .. '\\cr'
+    if not element then return text end
+    return ' \\cs(' .. element_colors[element][1] .. ',' .. element_colors[element][2] .. ',' .. element_colors[element][3] .. ')' .. text .. '\\cr'
 end
 
 function set_ability(ability, element, target)
-  local text = with_element_color(element, ability)
-  if target then
-    text = text .. ' >>> ' .. target
-  end
-  local img = element or 'none' --have to use transparent image due to bug in images lib
-  ability_icon:path(windower.addon_path .. 'img/elements/' .. img .. '.png')
-  ability_text:text(text)
+    local text = with_element_color(element, ability)
+    if target then
+        text = text .. ' >>> ' .. target
+    end
+    local img = element or 'none' --have to use transparent image due to bug in images lib
+    ability_icon:path(windower.addon_path .. 'img/elements/' .. img .. '.png')
+    ability_text:text(text)
 end
 
 function set_hp_colors_for_target(target)
@@ -168,21 +168,21 @@ function set_hp_percentage(percent)
 end
 
 function show()
-  background:show()
-  hp_text:show()
-  hp_bg:show()
-  hp_percentage:show()
-  ability_text:show()
-  ability_icon:show()
+    background:show()
+    hp_text:show()
+    hp_bg:show()
+    hp_percentage:show()
+    ability_text:show()
+    ability_icon:show()
 end
 
 function hide()
-  background:hide()
-  hp_text:hide()
-  hp_bg:hide()
-  hp_percentage:hide()
-  ability_text:hide()
-  ability_icon:hide()
+    background:hide()
+    hp_text:hide()
+    hp_bg:hide()
+    hp_percentage:hide()
+    ability_text:hide()
+    ability_icon:hide()
 end
 
 function update_position()
@@ -197,14 +197,14 @@ end
 commands = {}
 
 commands.focus = function()
-  local target = windower.ffxi.get_mob_by_target('t')
-  if not target or target.id == tracking then
-    tracking = nil
-    hide()
-    return
-  end
+    local target = windower.ffxi.get_mob_by_target('t')
+    if not target or target.id == tracking then
+        tracking = nil
+        hide()
+        return
+     end
 
-  tracking = target.id
+    tracking = target.id
 end
 
 commands.pos = function(axis, position)
@@ -226,69 +226,67 @@ commands.help = function()
 end
 
 windower.register_event('addon command', function(command, ...)
-  command = command and command:lower() or 'focus'
+    command = command and command:lower() or 'focus'
 
-  if commands[command] then
-    commands[command](...)
-  else
-    commands.help()
-  end
+    if commands[command] then
+        commands[command](...)
+    else
+        commands.help()
+    end
 end)
 
 windower.register_event("prerender", function()
-  if not tracking then return end
-  local focused_target = windower.ffxi.get_mob_by_id(tracking)
-  if not focused_target then
-    tracking = nil
-    return
-  end
+    if not tracking then return end
+    local focused_target = windower.ffxi.get_mob_by_id(tracking)
+    if not focused_target then
+        tracking = nil
+        return
+    end
 
-  -- target is not in range, or dead and depopped
-  if not focused_target.valid_target then
-    tracking = nil
-    hide()
-    return
-  end
+    -- target is not in range, or dead and depopped
+    if not focused_target.valid_target then
+        tracking = nil
+        hide()
+        return
+    end
 
-  set_hp_colors_for_target(focused_target)
-  set_hp_percentage(focused_target.hpp)
-  hp_text:text(focused_target.hpp .. '% ' .. focused_target.name)
-  show()
+    set_hp_colors_for_target(focused_target)
+    set_hp_percentage(focused_target.hpp)
+    hp_text:text(focused_target.hpp .. '% ' .. focused_target.name)
+    show()
 end)
 
 windower.register_event('action', function (action)
-  if not tracking or action.actor_id ~= tracking then return end
+    if not tracking or action.actor_id ~= tracking then return end
 
-  --[[
-    Categories:
-      4: Finish casting spell
-      7: Begin weapon skill or TP move
-      8: Begin spell casting or interrupt casting, param 24931 = start, param 28787 = interupt
-      11: Finish TP move
-  ]]
+    --[[
+        Categories:
+            4: Finish casting spell
+            7: Begin weapon skill or TP move
+            8: Begin spell casting or interrupt casting, param 24931 = start, param 28787 = interupt
+            11: Finish TP move
+    ]]
 
-  if action.category == 4 then
-    set_ability('')
-  elseif action.category == 8 then
-    -- Interupted
-    if action.param == 28787 then
-      set_ability('')
-      return
+    if action.category == 4 then
+        set_ability('')
+    elseif action.category == 8 then
+        -- Interupted
+        if action.param == 28787 then
+            set_ability('')
+            return
+        end
+
+        -- Casting new spell
+        local ability_id = action.targets[1].actions[1].param
+        local ability_name = res.spells[ability_id].name
+        local ability_element = res.spells[ability_id].element
+        local target_id = action.targets[1].id
+        local target_name
+        if target_id ~= tracking then
+            target_name = windower.ffxi.get_mob_by_id(target_id).name
+        end
+        set_ability(ability_name, ability_element, target_name)
     end
-
-    -- Casting new spell
-    local ability_id = action.targets[1].actions[1].param
-    local ability_name = res.spells[ability_id].name
-    local ability_element = res.spells[ability_id].element
-    local target_id = action.targets[1].id
-    local target_name
-    if target_id ~= tracking then
-      target_name = windower.ffxi.get_mob_by_id(target_id).name
-    end
-    set_ability(ability_name, ability_element, target_name)
-  -- elseif
-
-  end
 end)
 
 update_position()
