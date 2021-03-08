@@ -67,7 +67,7 @@ hp_colors = {
     npc = { 185, 255, 163 },
     unclaimed = { 252, 245, 173 },
     claimed = { 255, 189, 193 },
-    otherclaimed = { 252, 173, 252 },
+    outclaimed = { 252, 173, 252 },
     cfh = { 255, 208, 106 },
     defeated = { 152, 152, 152 }
 }
@@ -77,7 +77,7 @@ hp_stroke_colors = {
     npc = { 82, 227, 36 },
     unclaimed = { 173, 150, 54 },
     claimed = { 190, 84, 84 },
-    otherclaimed = { 156, 44, 156 },
+    outclaimed = { 156, 44, 156 },
     cfh = { 166, 115, 0 },
     defeated = { 72, 72, 72 }
 }
@@ -110,21 +110,12 @@ function set_ability(ability, element, target)
 end
 
 function set_hp_colors_for_target(target)
-    local bar_percentage = hp_colors.unclaimed
-    local text = hp_colors.unclaimed
-    local stroke = hp_stroke_colors.unclaimed
-    local img = 'unclaimed-hp.png'
+    local color = 'unclaimed'
 
     if target.spawn_type == 1 or target.spawn_type == 13 then
-        bar_percentage = hp_colors.player
-        text = hp_colors.player
-        stroke = hp_stroke_colors.player
-        img = 'player-hp.png'
+        color = 'player'
     elseif target.spawn_type == 2 then
-        bar_percentage = hp_colors.npc
-        text = hp_colors.npc
-        stroke = hp_stroke_colors.npc
-        img = 'npc-hp.png'
+        color = 'npc'
     elseif target.spawn_type == 16 then
         if target.status == 1 then
             local party = windower.ffxi.get_party()
@@ -140,27 +131,19 @@ function set_hp_colors_for_target(target)
             end
 
             if party_claimed then
-                bar_percentage = hp_colors.claimed
-                text = hp_colors.claimed
-                stroke = hp_stroke_colors.claimed
-                img = 'party-claimed-hp.png'
+                color = 'claimed'
             else
-                bar_percentage = hp_colors.otherclaimed
-                text = hp_colors.otherclaimed
-                stroke = hp_stroke_colors.otherclaimed
-                img = 'other-claimed-hp.png'
+                color = 'outclaimed'
             end
         elseif target.status == 2 or target.status == 3 then
-            text = hp_colors.defeated
-            stroke = hp_stroke_colors.defeated
-            img = 'defeated-hp.png'
+            color = 'defeated'
         end
     end
 
-    hp_bg:path(windower.addon_path .. 'img/' .. img)
-    hp_percentage:color(bar_percentage[1], bar_percentage[2], bar_percentage[3])
-    hp_text:color(text[1], text[2], text[3])
-    hp_text:stroke_color(stroke[1], stroke[2], stroke[3])
+    hp_bg:path(windower.addon_path .. 'img/' .. color .. '-hp.png')
+    hp_percentage:color(hp_colors[color][1], hp_colors[color][2], hp_colors[color][3])
+    hp_text:color(hp_colors[color][1], hp_colors[color][2], hp_colors[color][3])
+    hp_text:stroke_color(hp_stroke_colors[color][1], hp_stroke_colors[color][2], hp_stroke_colors[color][3])
 end
 
 function set_hp_percentage(percent)
