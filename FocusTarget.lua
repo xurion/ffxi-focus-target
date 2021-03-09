@@ -92,11 +92,12 @@ element_colors = {
     [6] = { 255, 255, 255 }, --light
     [7] = { 0, 0, 0 }, --dark
     [15] = { 255, 255, 255 }, --none
+    tp = { 181, 47, 22 } --tp move
 }
 
 function with_element_color(element, text)
     if not element then return text end
-    return ' \\cs(' .. element_colors[element][1] .. ',' .. element_colors[element][2] .. ',' .. element_colors[element][3] .. ')' .. text .. '\\cr'
+    return ' \\cs(' .. table.concat(element_colors[element], ",") .. ')' .. text .. '\\cr'
 end
 
 function set_ability(ability, element, target)
@@ -250,25 +251,29 @@ windower.register_event('action', function (action)
             11: Finish TP move
     ]]
 
-    if action.category == 4 then
-        set_ability('')
-    elseif action.category == 8 then
+    if action.category == 7 or action.category == 8 then
         -- Interupted
         if action.param == 28787 then
             set_ability('')
             return
         end
 
-        -- Casting new spell
+        -- Casting new spell or TP move
         local ability_id = action.targets[1].actions[1].param
-        local ability_name = res.spells[ability_id].name
-        local ability_element = res.spells[ability_id].element
+        local ability_name = res.monster_abilities[ability_id] and res.monster_abilities[ability_id].name
+        local ability_element = 'tp'
+        if action.category == 8 then
+            ability_name = res.spells[ability_id].name
+            ability_element = res.spells[ability_id].element
+        end
         local target_id = action.targets[1].id
         local target_name
         if target_id ~= tracking then
             target_name = windower.ffxi.get_mob_by_id(target_id).name
         end
         set_ability(ability_name, ability_element, target_name)
+    elseif action.category == 4 or action.category == 11 then
+        set_ability('')
     end
 end)
 
