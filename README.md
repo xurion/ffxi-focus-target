@@ -1,10 +1,12 @@
 # FFXI Focus Target
 
-A Windower 4 addon that allows you to focus a target in a similar fashion to Final Fantasy XIV.
+A Windower 4 addon that allows you to focus a target in a similar fashion to Final Fantasy XIV. It tracks HP, claim status and casting of spells on a target.
 
-![Example](readme/idle.png)
+![Idle](readme/idle.png)
 
-![Example](readme/claimed.png)
+![Claimed](readme/claimed.png)
+
+![Casting](readme/casting.png)
 
 # Commands
 
