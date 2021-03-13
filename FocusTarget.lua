@@ -191,13 +191,15 @@ commands.focus = function()
     tracking = target.id
 end
 
-commands.pos = function(axis, position)
-    if axis ~= 'x' and axis ~= 'y' or not position then
-        windower.add_to_chat(8, 'Bad position arguments. Example: //ft pos x 100')
+commands.pos = function(x, y)
+    if not x or not y then
+        windower.add_to_chat(8, 'Current x and y position: ' .. settings.pos.x .. ', ' .. settings.pos.y)
+        windower.add_to_chat(8, 'To set the position: //ft pos 100 200')
         return
     end
 
-    settings.pos[axis] = tonumber(position)
+    settings.pos.x = tonumber(x)
+    settings.pos.y = tonumber(y)
     settings:save()
     update_position()
 end
@@ -205,7 +207,8 @@ end
 commands.help = function()
     windower.add_to_chat(8, 'FocusTarget:')
     windower.add_to_chat(8, '  //ft - toggle focus on current target')
-    windower.add_to_chat(8, '  //ft pos <axis> <pos> - set the x or y position')
+    windower.add_to_chat(8, '  //ft pos - show the current x and y position')
+    windower.add_to_chat(8, '  //ft pos <x> <y> - set the x and y position')
     windower.add_to_chat(8, '  //ft help - display this help')
 end
 
