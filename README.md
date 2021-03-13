@@ -18,11 +18,13 @@ It can be helpful to setup a bind for this. To match the ALT+F bind from FFXIV:
 bind !f ft
 ```
 
-### //ft pos <axis> <pos>
+### //ft pos <x> <y>
 
 Set the position on either the x or y axis.
 
 Example: `//ft pos y 200`
+
+Simply running `//ft pos` will report the current x and y position.
 
 ### //ft help
 
