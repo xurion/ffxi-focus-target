@@ -110,10 +110,14 @@ function set_ability(ability, element, target)
     ability_text:text(text)
 end
 
+function is_player(target)
+    return target.spawn_type == 1 or target.spawn_type == 13
+end
+
 function set_hp_colors_for_target(target)
     local color = 'unclaimed'
 
-    if target.spawn_type == 1 or target.spawn_type == 13 then
+    if is_player(target) then
         color = 'player'
     elseif target.spawn_type == 2 then
         color = 'npc'
@@ -248,6 +252,7 @@ windower.register_event('action', function (action)
 
     --[[
         Categories:
+            3: Finish weapon skill
             4: Finish casting spell
             7: Begin weapon skill or TP move
             8: Begin spell casting or interrupt casting, param 24931 = start, param 28787 = interupt
@@ -263,9 +268,19 @@ windower.register_event('action', function (action)
 
         -- Casting new spell or TP move
         local ability_id = action.targets[1].actions[1].param
-        local ability_name = res.monster_abilities[ability_id] and res.monster_abilities[ability_id].name
-        local ability_element = 'tp'
-        if action.category == 8 then
+        local ability_name
+        local ability_element
+        if action.category == 7 then
+            ability_element = 'tp'
+            local actor = windower.ffxi.get_mob_by_id(action.actor_id)
+
+            -- Detect if the actor is a player or mob
+            if is_player(actor) then
+                ability_name = res.weapon_skills[ability_id].name
+            else
+                ability_name = res.monster_abilities[ability_id].name
+            end
+        else
             ability_name = res.spells[ability_id].name
             ability_element = res.spells[ability_id].element
         end
@@ -275,7 +290,7 @@ windower.register_event('action', function (action)
             target_name = windower.ffxi.get_mob_by_id(target_id).name
         end
         set_ability(ability_name, ability_element, target_name)
-    elseif action.category == 4 or action.category == 11 then
+    elseif action.category == 3 or action.category == 4 or action.category == 11 then
         set_ability('')
     end
 end)
