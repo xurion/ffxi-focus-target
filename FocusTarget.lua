@@ -119,7 +119,7 @@ function set_hp_colors_for_target(target)
 
     if is_player(target) then
         color = 'player'
-    elseif target.spawn_type == 2 then
+    elseif target.spawn_type == 2 or target.spawn_type == 14 then
         color = 'npc'
     elseif target.spawn_type == 16 then
         if target.status == 1 then
