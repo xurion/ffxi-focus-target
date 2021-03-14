@@ -20,17 +20,23 @@ setup = {}
 setup.flags = {}
 setup.flags.draggable = false
 
-background = images.new(setup)
-background:path(windower.addon_path .. 'img/title.png')
-background:repeat_xy(1, 1)
-background:draggable(false)
-background:fit(true)
+title = texts.new(setup)
+title:bg_visible(false)
+title:size(20)
+title:stroke_transparency(100)
+title:stroke_width(1)
+title:color(252, 245, 173)
+title:bold(true)
+title:text('FOCUS TARGET')
+title_offset_x = -2
+title_offset_y = -6
 
 hp_text = texts.new(setup)
 hp_text:bg_visible(false)
 hp_text:size(16)
 hp_text:stroke_transparency(100)
 hp_text:stroke_width(1)
+hp_text:bold(false)
 hp_text_offset_x = 0
 hp_text_offset_y = 25
 
@@ -157,7 +163,7 @@ function set_hp_percentage(percent)
 end
 
 function show()
-    background:show()
+    title:show()
     hp_text:show()
     hp_bg:show()
     hp_percentage:show()
@@ -166,7 +172,7 @@ function show()
 end
 
 function hide()
-    background:hide()
+    title:hide()
     hp_text:hide()
     hp_bg:hide()
     hp_percentage:hide()
@@ -175,7 +181,7 @@ function hide()
 end
 
 function update_position()
-    background:pos(settings.pos.x, settings.pos.y)
+    title:pos(settings.pos.x + title_offset_x, settings.pos.y + title_offset_y)
     hp_text:pos(settings.pos.x + hp_text_offset_x, settings.pos.y + hp_text_offset_y)
     hp_bg:pos(settings.pos.x + hp_bg_offset_x, settings.pos.y + hp_bg_offset_y)
     hp_percentage:pos(settings.pos.x + hp_percentage_offset_x, settings.pos.y + hp_percentage_offset_y)
@@ -314,7 +320,7 @@ windower.register_event('action', function (action)
             target_name = windower.ffxi.get_mob_by_id(target_id).name
         end
         set_ability(item_name, 'item', target_name)
-    elseif action.category == 3 or action.category == 4 or action.category == 11 then
+    elseif action.category == 3 or action.category == 4 or action.category == 5 or action.category == 11 then
         set_ability('')
     end
 end)
