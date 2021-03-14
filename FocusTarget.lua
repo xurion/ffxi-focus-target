@@ -92,7 +92,8 @@ element_colors = {
     [6] = { 255, 255, 255 }, --light
     [7] = { 0, 0, 0 }, --dark
     [15] = { 255, 255, 255 }, --none
-    tp = { 181, 47, 22 } --tp move
+    tp = { 181, 47, 22 },
+    item = { 133, 79, 24 }
 }
 
 function with_element_color(element, text)
@@ -192,6 +193,7 @@ commands.focus = function()
         return
      end
 
+    set_ability('')
     tracking = target.id
 end
 
@@ -247,6 +249,10 @@ windower.register_event("prerender", function()
     show()
 end)
 
+windower.register_event('zone change', function ()
+    hide()
+end)
+
 windower.register_event('action', function (action)
     if not tracking or action.actor_id ~= tracking then return end
 
@@ -254,8 +260,10 @@ windower.register_event('action', function (action)
         Categories:
             3: Finish weapon skill
             4: Finish casting spell
+            5: Finish item use
             7: Begin weapon skill or TP move
             8: Begin spell casting or interrupt casting, param 24931 = start, param 28787 = interupt
+            9: Begin item use or interrupt usage
             11: Finish TP move
     ]]
 
@@ -290,6 +298,22 @@ windower.register_event('action', function (action)
             target_name = windower.ffxi.get_mob_by_id(target_id).name
         end
         set_ability(ability_name, ability_element, target_name)
+    elseif action.category == 9 then
+        -- Interupted
+        if action.param == 28787 then
+            set_ability('')
+            return
+        end
+
+        -- Using item
+        local item_id = action.targets[1].actions[1].param
+        local item_name = res.items[item_id].name
+        local target_id = action.targets[1].id
+        local target_name
+        if target_id ~= tracking then
+            target_name = windower.ffxi.get_mob_by_id(target_id).name
+        end
+        set_ability(item_name, 'item', target_name)
     elseif action.category == 3 or action.category == 4 or action.category == 11 then
         set_ability('')
     end
