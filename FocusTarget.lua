@@ -14,6 +14,7 @@ defaults.pos.x = 0
 defaults.pos.y = 0
 defaults.title = true
 defaults.abilities = true
+defaults.autofocus = false
 settings = config.load(defaults)
 
 tracking = nil
@@ -186,11 +187,6 @@ function hide()
     ability_icon:hide()
 end
 
-function refresh_ui()
-    hide()
-    show()
-end
-
 function update_position()
     title:pos(settings.pos.x + title_offset_x, settings.pos.y + title_offset_y)
     hp_text:pos(settings.pos.x + hp_text_offset_x, settings.pos.y + hp_text_offset_y)
@@ -230,15 +226,18 @@ end
 commands.title = function()
     settings.title = not settings.title
     settings:save()
-    refresh_ui()
 end
 
 commands.abilities = function()
     settings.abilities = not settings.abilities
     settings:save()
-    refresh_ui()
 end
 commands.spells = commands.abilities
+
+commands.autofocus = function()
+    settings.autofocus = not settings.autofocus
+    settings:save()
+end
 
 commands.help = function()
     windower.add_to_chat(8, 'FocusTarget:')
@@ -248,6 +247,7 @@ commands.help = function()
     windower.add_to_chat(8, '  //ft title - toggle the display of the FOCUS TARGET title')
     windower.add_to_chat(8, '  //ft abilities - toggle the display of spells and abilities')
     windower.add_to_chat(8, '  //ft spells - alias command for //ft abilities')
+    windower.add_to_chat(8, '  //ft autofocus - automatically focus your current target')
     windower.add_to_chat(8, '  //ft help - display this help')
 end
 
@@ -258,6 +258,17 @@ windower.register_event('addon command', function(command, ...)
         commands[command](...)
     else
         commands.help()
+    end
+end)
+
+windower.register_event("target change", function(index)
+    if settings.autofocus then
+        if index == 0 then
+            tracking = nil
+            hide()
+        else
+            commands.focus()
+        end
     end
 end)
 

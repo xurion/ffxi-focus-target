@@ -36,6 +36,10 @@ Toggles the display of abilities and spells.
 
 Alias: `//ft spells`.
 
+### //ft autofocus
+
+Toggles auto focus mode. Auto focus will focus your current target and changes focus as you change target.
+
 ### //ft help
 
 Displays command help.
