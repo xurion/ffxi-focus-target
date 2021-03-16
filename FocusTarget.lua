@@ -231,12 +231,14 @@ end
 commands.abilities = function()
     settings.abilities = not settings.abilities
     settings:save()
+    windower.add_to_chat(8, 'Ability and spell display: ' .. tostring(settings.abilities))
 end
 commands.spells = commands.abilities
 
 commands.autofocus = function()
     settings.autofocus = not settings.autofocus
     settings:save()
+    windower.add_to_chat(8, 'Auto focus: ' .. tostring(settings.autofocus))
 end
 
 commands.help = function()
