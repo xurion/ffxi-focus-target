@@ -13,6 +13,7 @@ defaults.pos = {}
 defaults.pos.x = 0
 defaults.pos.y = 0
 defaults.title = true
+defaults.abilities = true
 settings = config.load(defaults)
 
 tracking = nil
@@ -170,8 +171,10 @@ function show()
     hp_text:show()
     hp_bg:show()
     hp_percentage:show()
-    ability_text:show()
-    ability_icon:show()
+    if settings.abilities then
+        ability_text:show()
+        ability_icon:show()
+    end
 end
 
 function hide()
@@ -230,12 +233,21 @@ commands.title = function()
     refresh_ui()
 end
 
+commands.abilities = function()
+    settings.abilities = not settings.abilities
+    settings:save()
+    refresh_ui()
+end
+commands.spells = commands.abilities
+
 commands.help = function()
     windower.add_to_chat(8, 'FocusTarget:')
     windower.add_to_chat(8, '  //ft - toggle focus on current target')
     windower.add_to_chat(8, '  //ft pos - show the current x and y position')
     windower.add_to_chat(8, '  //ft pos <x> <y> - set the x and y position')
     windower.add_to_chat(8, '  //ft title - toggle the display of the FOCUS TARGET title')
+    windower.add_to_chat(8, '  //ft abilities - toggle the display of spells and abilities')
+    windower.add_to_chat(8, '  //ft spells - alias command for //ft abilities')
     windower.add_to_chat(8, '  //ft help - display this help')
 end
 

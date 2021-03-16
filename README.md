@@ -30,6 +30,12 @@ Simply running `//ft pos` will report the current x and y position.
 
 Toggles the display of the FOCUS TARGET title.
 
+### //ft abilities
+
+Toggles the display of abilities and spells.
+
+Alias: `//ft spells`.
+
 ### //ft help
 
 Displays command help.
