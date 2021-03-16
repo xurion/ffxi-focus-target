@@ -26,6 +26,10 @@ Example: `//ft pos y 200`
 
 Simply running `//ft pos` will report the current x and y position.
 
+### //ft title
+
+Toggles the display of the FOCUS TARGET title.
+
 ### //ft help
 
 Displays command help.

@@ -12,6 +12,7 @@ local defaults = {}
 defaults.pos = {}
 defaults.pos.x = 0
 defaults.pos.y = 0
+defaults.title = true
 settings = config.load(defaults)
 
 tracking = nil
@@ -112,7 +113,7 @@ function set_ability(ability, element, target)
     if target then
         text = text .. ' >>> ' .. target
     end
-    local img = element or 'none' --have to use transparent image due to bug in images lib
+    local img = element or 'none' -- Have to use transparent image due to bug in images lib
     ability_icon:path(windower.addon_path .. 'img/elements/' .. img .. '.png')
     ability_text:text(text)
 end
@@ -163,7 +164,9 @@ function set_hp_percentage(percent)
 end
 
 function show()
-    title:show()
+    if settings.title then
+        title:show()
+    end
     hp_text:show()
     hp_bg:show()
     hp_percentage:show()
@@ -178,6 +181,11 @@ function hide()
     hp_percentage:hide()
     ability_text:hide()
     ability_icon:hide()
+end
+
+function refresh_ui()
+    hide()
+    show()
 end
 
 function update_position()
@@ -216,11 +224,18 @@ commands.pos = function(x, y)
     update_position()
 end
 
+commands.title = function()
+    settings.title = not settings.title
+    settings:save()
+    refresh_ui()
+end
+
 commands.help = function()
     windower.add_to_chat(8, 'FocusTarget:')
     windower.add_to_chat(8, '  //ft - toggle focus on current target')
     windower.add_to_chat(8, '  //ft pos - show the current x and y position')
     windower.add_to_chat(8, '  //ft pos <x> <y> - set the x and y position')
+    windower.add_to_chat(8, '  //ft title - toggle the display of the FOCUS TARGET title')
     windower.add_to_chat(8, '  //ft help - display this help')
 end
 
