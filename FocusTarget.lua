@@ -112,7 +112,7 @@ end
 function set_ability(ability, element, target)
     local text = with_element_color(element, ability)
     if target then
-        text = text .. ' >>> ' .. target
+        text = text .. ' → ' .. target
     end
     local img = element or 'none' -- Have to use transparent image due to bug in images lib
     ability_icon:path(windower.addon_path .. 'img/elements/' .. img .. '.png')
