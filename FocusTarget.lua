@@ -37,7 +37,6 @@ title_offset_y = -6
 hp_text = texts.new(setup)
 hp_text:bg_visible(false)
 hp_text:size(16)
-hp_text:stroke_transparency(100)
 hp_text:stroke_width(1)
 hp_text:bold(false)
 hp_text_offset_x = 0
@@ -83,7 +82,7 @@ hp_colors = {
 
 hp_stroke_colors = {
     player = { 30, 107, 76 },
-    npc = { 82, 227, 36 },
+    npc = { 50, 87, 38 },
     unclaimed = { 173, 150, 54 },
     claimed = { 190, 84, 84 },
     outclaimed = { 156, 44, 156 },
